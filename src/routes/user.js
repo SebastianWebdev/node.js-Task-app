@@ -1,22 +1,22 @@
 const express = require('express');
 const router = new express.Router()
 const User = require("../models/user")
+const auth = require('../middleware/auth')
 
 
 
 // add new user
 router.post('/users', async (req, res) => {
     const user = new User(req.body)
-    const token = await user.generateAuthToken()
-
     try {
         await user.save()
+        const token = await user.generateAuthToken()
         res.status(201).send({
             user,
             token
         })
-    } catch (e) {
-        res.status(400).send(e)
+    } catch (err) {
+        res.status(400).send(err)
     }
 
 })
@@ -33,9 +33,29 @@ router.post('/users/login', async (req, res) => {
         res.status(400).send(e)
     }
 })
+// user logout
+router.post('/logout', auth, async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter(token => token.token !== req.token)
+        await req.user.save()
+        res.send("User Logout")
+    } catch (e) {
+        res.status(500).send(e)
+    }
+})
+// logout all sessions
+router.post('/logoutAll', auth, async (req, res) => {
+    try {
+        req.user.tokens = []
+        await req.user.save()
+        res.send(`Logout complete`)
+    } catch (e) {
+        res.status(500).send()
+    }
+})
 
-// get user by params
-router.get('/getUsers', async (req, res) => {
+// get user by params. This route is only for developing proccess
+router.get('/getUsers', auth, async (req, res) => {
     const params = req.query
     try {
         const result = await User.find(params)
@@ -49,9 +69,12 @@ router.get('/getUsers', async (req, res) => {
         res.status(500).send(e)
     }
 })
+router.get('/getMe', auth, async (req, res) => {
+    res.send(req.user)
+})
 
 // getting user by id
-router.get('/getUserById/:id', async (req, res) => {
+router.get('/getUserById/:id', auth, async (req, res) => {
     const _id = req.params.id
 
     try {
@@ -65,7 +88,7 @@ router.get('/getUserById/:id', async (req, res) => {
     }
 })
 // Update User Data
-router.patch('/updateUserById/:id', async (req, res) => {
+router.patch('/updateUserById/:id', auth, async (req, res) => {
     const valid = ['name', 'email', 'password', 'age'];
     const updates = Object.keys(req.body);
     const isValid = updates.every(i => valid.includes(i))
@@ -89,7 +112,7 @@ router.patch('/updateUserById/:id', async (req, res) => {
 })
 
 // delete User by id
-router.delete('/deleteUserById/:id', async (req, res) => {
+router.delete('/deleteUserById/:id', auth, async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id)
         if (!user) {

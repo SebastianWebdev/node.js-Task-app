@@ -64,7 +64,6 @@ userSchema.statics.findAndVerifyPass = async (email, pass) => {
     const user = await User.findOne({
         email
     })
-
     if (!user) {
         throw new Error('Bad login or password')
     }
@@ -75,9 +74,16 @@ userSchema.statics.findAndVerifyPass = async (email, pass) => {
     }
     return user
 }
+// hidding private data
+userSchema.methods.toJSON = function() {
+    const user = this
+    const userObject = user.toObject()
+    delete userObject.password
+    delete userObject.tokens
+    return userObject
+}
 
-
-
+// hashing password
 userSchema.pre('save', async function(next) {
     const user = this
     if (user.isModified('password')) {

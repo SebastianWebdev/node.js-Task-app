@@ -1,9 +1,10 @@
 const express = require('express');
 const router = new express.Router()
 const Task = require("../models/task")
+const auth = require('../middleware/auth')
 
 // post task
-router.post("/tasks", async (req, res) => {
+router.post("/tasks", auth, async (req, res) => {
     const task = new Task(req.body)
     try {
         await task.save()
@@ -14,7 +15,7 @@ router.post("/tasks", async (req, res) => {
 })
 
 // get tasks by params
-router.get('/getTasks', async (req, res) => {
+router.get('/getTasks', auth, async (req, res) => {
     const params = req.query
     const result = await Task.find(params)
     try {
@@ -27,7 +28,7 @@ router.get('/getTasks', async (req, res) => {
     }
 })
 // get task by id
-router.get('/getTaskById/:id', async (req, res) => {
+router.get('/getTaskById/:id', auth, async (req, res) => {
     const _id = req.params.id
     const result = await Task.findById(_id)
     try {
@@ -43,7 +44,7 @@ router.get('/getTaskById/:id', async (req, res) => {
 //---------------- Updating 
 
 // update task by id
-router.patch('/updateTaskById/:id', async (req, res) => {
+router.patch('/updateTaskById/:id', auth, async (req, res) => {
     const valid = ['completed', 'description'];
     const proper = Object.keys(req.body)
     const isValid = proper.every(i => valid.includes(i))
@@ -66,7 +67,7 @@ router.patch('/updateTaskById/:id', async (req, res) => {
 //---------Deleting
 
 // delete task by id
-router.delete('/deleteTaskById/:id', async (req, res) => {
+router.delete('/deleteTaskById/:id', auth, async (req, res) => {
     try {
         const task = await Task.findByIdAndDelete(req.params.id)
         if (!task) {
