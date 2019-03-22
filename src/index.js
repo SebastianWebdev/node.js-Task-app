@@ -3,6 +3,7 @@ const express = require('express');
 // importing routers
 const userRouter = require('./routes/user')
 const taskRouter = require('./routes/task')
+const devRouter = require('./routes/dev')
 
 //importing files for using DB
 require('./db/mongose') // cały kod z mongoose
@@ -18,6 +19,7 @@ app.use(express.json()) // wxpress will automaticly parse data to json
 // routes to endpoints
 app.use(userRouter)
 app.use(taskRouter)
+app.use(devRouter)
 
 
 
