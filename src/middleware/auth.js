@@ -5,7 +5,7 @@ const auth = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '')
         const decoded = jwt.verify(token, "secret") // user Id from token
-        // find user by id, and return only if secific token exist in that user(user has property tokens.token)
+        // find user by id, and return only if specific token exist in that user(user has property tokens.token)
         const user = await User.findOne({
             _id: decoded._id,
             'tokens.token': token

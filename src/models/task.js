@@ -9,6 +9,10 @@ const taskShema = new mongose.Schema({
         type: Boolean,
         required: false,
         default: false,
+    },
+    owner: {
+        type: mongose.Types.ObjectId,
+        required: true,
     }
 })
 

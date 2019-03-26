@@ -7,7 +7,9 @@ const auth = require('../middleware/auth')
 
 // add new user
 router.post('/users', async (req, res) => {
+    console.log(req.body);
     const user = new User(req.body)
+
     try {
         await user.save()
         const token = await user.generateAuthToken()
@@ -34,7 +36,7 @@ router.post('/users/login', async (req, res) => {
     }
 })
 // user logout
-router.post('/logout', auth, async (req, res) => {
+router.post('/users/logout', auth, async (req, res) => {
     try {
         req.user.tokens = req.user.tokens.filter(token => token.token !== req.token)
         await req.user.save()
@@ -44,7 +46,7 @@ router.post('/logout', auth, async (req, res) => {
     }
 })
 // logout all sessions
-router.post('/logoutAll', auth, async (req, res) => {
+router.post('/users/logout-all', auth, async (req, res) => {
     try {
         req.user.tokens = []
         await req.user.save()
@@ -55,14 +57,14 @@ router.post('/logoutAll', auth, async (req, res) => {
 })
 
 
-router.get('/getMe', auth, async (req, res) => {
+router.get('/users/me', auth, async (req, res) => {
     res.send(req.user)
 })
 
 
 // Update User Data
 
-router.patch('/updateMe', auth, async (req, res) => {
+router.patch('/users/update', auth, async (req, res) => {
     const valid = ['name', 'email', 'password', 'age'];
     const updates = Object.keys(req.body);
     const isValid = updates.every(i => valid.includes(i))
@@ -80,7 +82,7 @@ router.patch('/updateMe', auth, async (req, res) => {
 })
 
 // delete User by id
-router.delete('/deleteMe', auth, async (req, res) => {
+router.delete('/users/delete', auth, async (req, res) => {
     try {
         const user = req.user
         if (!user) {
