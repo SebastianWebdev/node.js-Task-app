@@ -48,6 +48,8 @@ const userSchema = new mongose.Schema({
         }
     }]
 
+}, {
+    timestamps: true,
 })
 userSchema.virtual('task', {
     ref: "Task",

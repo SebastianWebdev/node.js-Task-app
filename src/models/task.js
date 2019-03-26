@@ -14,6 +14,8 @@ const taskShema = new mongose.Schema({
         type: mongose.Types.ObjectId,
         required: true,
     }
+}, {
+    timestamps: true,
 })
 
 taskShema.pre('save', async function(next) {
