@@ -11,17 +11,13 @@ const taskShema = new mongose.Schema({
         default: false,
     },
     owner: {
-        type: mongose.Types.ObjectId,
+        type: mongose.Schema.Types.ObjectId,
         required: true,
+        ref: "User"
     }
 }, {
     timestamps: true,
 })
 
-taskShema.pre('save', async function(next) {
-
-
-    next()
-})
 const Task = mongose.model('Task', taskShema)
 module.exports = Task

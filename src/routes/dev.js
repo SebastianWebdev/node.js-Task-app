@@ -41,5 +41,19 @@ router.patch('/updateUserById/:id', async (req, res) => {
         res.status(400).send(e)
     }
 })
+/*
+router.get('/tasks', auth, async (req, res) => {
+    const params = req.query
+    const result = await Task.find(params)
+    try {
+        if (result.length === 0) {
+            throw new Error(res.status(404).send("Tasks not found"))
+        }
+        res.send(result)
+    } catch (e) {
+        res.status(500).send()
+    }
+})
+*/
 
 module.exports = router

@@ -7,7 +7,7 @@ const auth = require('../middleware/auth')
 
 // add new user
 router.post('/users', async (req, res) => {
-    console.log(req.body);
+
     const user = new User(req.body)
 
     try {

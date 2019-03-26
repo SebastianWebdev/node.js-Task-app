@@ -18,34 +18,27 @@ router.post("/tasks", auth, async (req, res) => {
     }
 })
 
-// get tasks by params
-router.get('/tasks', auth, async (req, res) => {
-    const params = req.query
-    const result = await Task.find(params)
-    try {
-        if (result.length === 0) {
-            throw new Error(res.status(404).send("Tasks not found"))
-        }
-        res.send(result)
-    } catch (e) {
-        res.status(500).send()
-    }
-})
 // get user tasks 
 router.get('/tasks', auth, async (req, res) => {
-    const match = {}
+    const match = {};
     if (req.query.completed) {
         match.completed = req.query.completed === "true"
     }
-    const tasks = await req.user.populate({
-        patch: 'task',
-        match
-    }).execPopulate()
     try {
-        if (!tasks) {
+        await req.user.populate({
+            path: 'tasks',
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip)
+            }
+
+        }).execPopulate()
+
+        if (!req.user.tasks) {
             throw new Error(res.status(404).send('Task not found'))
         }
-        res.send(tasks)
+        res.send(req.user.tasks)
     } catch (e) {
         res.status(500).send(e)
     }

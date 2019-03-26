@@ -15,8 +15,7 @@
     "express": "^4.16.4",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.1.13",
-    "mongoose": "^5.4.19",
-    "mongose": "0.0.2-security",
+    "mongoose": "^5.3.16",
     "validator": "^10.11.0"
   },
   "devDependencies": {
