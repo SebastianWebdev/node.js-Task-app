@@ -33,7 +33,14 @@ router.get('/tasks', auth, async (req, res) => {
 })
 // get user tasks 
 router.get('/tasks', auth, async (req, res) => {
-    const tasks = await req.user.populate('task').execPopulate()
+    const match = {}
+    if (req.query.completed) {
+        match.completed = req.query.completed === "true"
+    }
+    const tasks = await req.user.populate({
+        patch: 'task',
+        match
+    }).execPopulate()
     try {
         if (!tasks) {
             throw new Error(res.status(404).send('Task not found'))
