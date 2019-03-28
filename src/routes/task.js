@@ -21,6 +21,14 @@ router.post("/tasks", auth, async (req, res) => {
 // get user tasks 
 router.get('/tasks', auth, async (req, res) => {
     const match = {};
+    const sort = {};
+    if (req.query.sort) {
+        const keyValue = req.query.sort.split(":")
+        sort[keyValue[0]] = keyValue[1] === "desc" ? -1 : 1
+    }
+
+    console.log(sort);
+
     if (req.query.completed) {
         match.completed = req.query.completed === "true"
     }
@@ -30,8 +38,10 @@ router.get('/tasks', auth, async (req, res) => {
             match,
             options: {
                 limit: parseInt(req.query.limit),
-                skip: parseInt(req.query.skip)
-            }
+                skip: parseInt(req.query.skip),
+                sort
+            },
+
 
         }).execPopulate()
 
