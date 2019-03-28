@@ -1,8 +1,9 @@
-const express = require('express');
+const express = require('express')
+const sharp = require('sharp')
 const router = new express.Router()
 const User = require("../models/user")
 const auth = require('../middleware/auth')
-
+const uploadAvatar = require('../middleware/avatar')
 
 
 // add new user
@@ -63,7 +64,6 @@ router.get('/users/me', auth, async (req, res) => {
 
 
 // Update User Data
-
 router.patch('/users/update', auth, async (req, res) => {
     const valid = ['name', 'email', 'password', 'age'];
     const updates = Object.keys(req.body);
@@ -94,6 +94,37 @@ router.delete('/users/delete', auth, async (req, res) => {
         res.status(500).send()
     }
 
+})
+// uplouds user avatar
+router.post('/users/me/avatar', auth, uploadAvatar.single('avatar'), async (req, res) => {
+    const buffer = await sharp(req.file.buffer).resize(250, 250).png().toBuffer()
+    req.user.avatar = buffer
+    await req.user.save()
+    res.sendStatus(200)
+}, (error, req, res, next) => {
+    res.status(400).send({
+        error: error.message
+    })
+})
+// deleting avatar
+router.delete('/users/me/avatar', auth, async (req, res) => {
+    req.user.avatar = undefined;
+    await req.user.save()
+    res.status(200).send('avatar deleted')
+})
+// get user avatar
+router.get('/users/:id/avatar', async (req, res) => {
+    const user = await User.findById(req.params.id);
+
+    try {
+        if (!user || !user.avatar) {
+            throw new Error()
+        }
+        res.set('Content-Type', 'image/png').send(user.avatar)
+
+    } catch (e) {
+        res.status(404).send()
+    }
 })
 
 module.exports = router
