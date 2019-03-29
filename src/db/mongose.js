@@ -2,7 +2,9 @@
 const mongose = require('mongoose')
 
 
-const connectionURL = 'mongodb://127.0.0.1:27017/Task-Manager-Api'
+const connectionURL = process.env.DB_URL
+
+
 const connectionOptions = {
     useNewUrlParser: true,
     useCreateIndex: true, // very important!

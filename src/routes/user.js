@@ -1,9 +1,11 @@
 const express = require('express')
 const sharp = require('sharp')
+const mailer = require('../mail/mailer')
 const router = new express.Router()
 const User = require("../models/user")
 const auth = require('../middleware/auth')
 const uploadAvatar = require('../middleware/avatar')
+const mail = require('../mail/mailer')
 
 
 // add new user
@@ -14,13 +16,26 @@ router.post('/users', async (req, res) => {
     try {
         await user.save()
         const token = await user.generateAuthToken()
-        res.status(201).send({
+
+        await res.status(201).send({
             user,
-            token
+            token,
+            message: 'We send you an email, check your inbox'
         })
+        await mailer(mailOptions = {
+            from: 'kontakt@sebastian-webdev.pl',
+            to: req.body.email,
+            subject: 'Task-App welcome message',
+            text: ` Welcome to Task-App! Login using this credentials: Username: ${req.body.name}, Password: ${req.body.password}`
+        })
+
+
     } catch (err) {
+        console.log(err);
+
         res.status(400).send(err)
     }
+
 
 })
 // user login
@@ -90,6 +105,12 @@ router.delete('/users/delete', auth, async (req, res) => {
         }
         user.delete()
         res.send(user)
+        await mailer(mailOptions = {
+            from: 'kontakt@sebastian-webdev.pl',
+            to: user.email,
+            subject: 'Task-App Goodbye',
+            text: ` You just delete your account`
+        })
     } catch (e) {
         res.status(500).send()
     }
