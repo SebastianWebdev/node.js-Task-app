@@ -10,7 +10,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "env-cmd ./config/dev.env nodemon src/index.js",
-    "heroku-postbuild": "echo Skip builds on Heroku"
+    "heroku-postbuild": "echo Skip builds on Heroku",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "env-cmd": "^8.0.2",
+    "jest": "^24.5.0",
     "nodemon": "^1.18.10"
   }
 }
