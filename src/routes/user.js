@@ -5,7 +5,7 @@ const router = new express.Router()
 const User = require("../models/user")
 const auth = require('../middleware/auth')
 const uploadAvatar = require('../middleware/avatar')
-const mail = require('../mail/mailer')
+
 
 
 // add new user

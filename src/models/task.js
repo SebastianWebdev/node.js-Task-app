@@ -10,6 +10,11 @@ const taskShema = new mongose.Schema({
         required: false,
         default: false,
     },
+    list: {
+        type: mongose.Schema.Types.ObjectId,
+        required: true,
+        ref: "List"
+    },
     owner: {
         type: mongose.Schema.Types.ObjectId,
         required: true,
