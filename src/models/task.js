@@ -3,7 +3,19 @@ const taskShema = new mongose.Schema({
     description: {
         type: String,
         trim: true,
+    },
+    name: {
+        type: String,
         required: true,
+    },
+    stage: {
+        type: Number,
+        required: true,
+        validate(v) {
+            if (v !== 1 && v !== 2 && v !== 3) {
+                throw new Error("Provide correct stage code")
+            }
+        }
     },
     completed: {
         type: Boolean,

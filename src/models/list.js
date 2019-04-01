@@ -5,6 +5,9 @@ const listShema = new mongose.Schema({
         required: true,
         trim: true,
     },
+    description: {
+        type: String,
+    },
     owner: {
         type: mongose.Schema.Types.ObjectId,
         required: true,
