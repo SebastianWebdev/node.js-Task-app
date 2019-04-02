@@ -2,13 +2,16 @@ const express = require('express');
 const router = new express.Router()
 const Task = require("../models/task")
 const auth = require('../middleware/auth')
+const fList = require('../middleware/fList')
 
 // post task
-router.post("/tasks", auth, async (req, res) => {
-    //const task = new Task(req.body)
+router.post("/tasks", auth, fList, async (req, res) => {
+
     const task = new Task({
         ...req.body,
-        owner: req.user._id
+        owner: req.user._id,
+        list: req.list._id,
+        stage: 1
     })
     try {
         await task.save()
@@ -18,16 +21,51 @@ router.post("/tasks", auth, async (req, res) => {
     }
 })
 
-// get user tasks 
-router.get('/tasks', auth, async (req, res) => {
+// get user tasks by list
+router.get('/tasks/list/:id', auth, fList, async (req, res) => {
     const match = {};
     const sort = {};
+
     if (req.query.sort) {
         const keyValue = req.query.sort.split(":")
         sort[keyValue[0]] = keyValue[1] === "desc" ? -1 : 1
     }
 
-    console.log(sort);
+    if (req.query.completed) {
+        match.completed = req.query.completed === "true"
+    }
+    match.list = req.body.list_id
+    try {
+        await req.list.populate({
+            path: 'tasks',
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort
+            },
+        }).execPopulate()
+
+        if (!req.list.tasks) {
+
+            throw new Error(res.status(404).send("task not found"))
+        }
+        res.send(req.list.tasks)
+    } catch (e) {
+        res.status(500)
+    }
+
+})
+
+// get all user tasks 
+router.get('/tasks', auth, async (req, res) => {
+    const match = {};
+    const sort = {};
+
+    if (req.query.sort) {
+        const keyValue = req.query.sort.split(":")
+        sort[keyValue[0]] = keyValue[1] === "desc" ? -1 : 1
+    }
 
     if (req.query.completed) {
         match.completed = req.query.completed === "true"
@@ -41,24 +79,36 @@ router.get('/tasks', auth, async (req, res) => {
                 skip: parseInt(req.query.skip),
                 sort
             },
-
-
         }).execPopulate()
-
-        if (!req.user.tasks) {
-            throw new Error(res.status(404).send('Task not found'))
-        }
-        res.send(req.user.tasks)
     } catch (e) {
-        res.status(500).send(e)
+        res.status(500)
+    }
+
+    if (!req.user.tasks) {
+        throw new Error(res.status(404).send("task not found"))
+    }
+    if (req.query.stats) {
+        const tasksCompleted = req.user.tasks.filter(task => task.completed).length
+        const tasksTotal = req.user.tasks.length
+        const tasksUncompleated = tasksTotal - tasksCompleted
+        const stats = {
+            tasksTotal,
+            tasksCompleted,
+            tasksUncompleated
+        }
+        res.send(stats)
+    } else {
+
+        res.send(req.user.tasks)
     }
 
 })
+
 //---------------- Updating 
 
 // update task by id
 router.patch('/tasks/:id', auth, async (req, res) => {
-    const valid = ['completed', 'description'];
+    const valid = ['completed', 'description', 'stage', 'name'];
     const proper = Object.keys(req.body)
     const isValid = proper.every(i => valid.includes(i))
     if (!isValid) {

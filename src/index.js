@@ -4,6 +4,7 @@ const express = require('express');
 const userRouter = require('./routes/user')
 const taskRouter = require('./routes/task')
 const devRouter = require('./routes/dev')
+const listRouter = require('./routes/list')
 
 //importing files for using DB
 require('./db/mongose') // cały kod z mongoose
@@ -19,6 +20,7 @@ app.use(express.json()) // express will automaticly parse data to json
 // routes to endpoints
 app.use(userRouter)
 app.use(taskRouter)
+app.use(listRouter)
 app.use(devRouter)
 
 
