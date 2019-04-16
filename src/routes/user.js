@@ -136,15 +136,14 @@ router.delete('/users/me/avatar', auth, async (req, res) => {
 // get user avatar
 router.get('/users/:id/avatar', async (req, res) => {
     const user = await User.findById(req.params.id);
-
     try {
         if (!user || !user.avatar) {
-            throw new Error()
+            throw new Error("avatar nie znaleziony")
         }
-        res.set('Content-Type', 'image/png').send(user.avatar)
+        res.set('Content-Type', 'image/png').satus(200).send(user.avatar)
 
     } catch (e) {
-        res.status(404).send()
+        res.status(404).send(e.message)
     }
 })
 
