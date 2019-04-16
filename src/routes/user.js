@@ -140,10 +140,10 @@ router.get('/users/:id/avatar', async (req, res) => {
         if (!user || !user.avatar) {
             throw new Error("avatar nie znaleziony")
         }
-        res.set('Content-Type', 'image/png').satus(200).send(user.avatar)
+        res.set('Content-Type', 'image/png').send(user.avatar)
 
     } catch (e) {
-        res.status(404).send(e.message)
+        res.status(404).send(e)
     }
 })
 
