@@ -53,8 +53,8 @@ const userSchema = new mongose.Schema({
     }]
 
 }, {
-    timestamps: true,
-})
+        timestamps: true,
+    })
 userSchema.virtual('tasks', {
     ref: "Task",
     localField: "_id",
@@ -96,7 +96,7 @@ userSchema.methods.toJSON = function() {
     const userObject = user.toObject()
     delete userObject.password
     delete userObject.tokens
-    delete userObject.avatar
+    //delete userObject.avatar
     return userObject
 }
 
