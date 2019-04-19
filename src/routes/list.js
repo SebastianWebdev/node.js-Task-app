@@ -35,7 +35,7 @@ router.get('/lists', auth, async (req, res) => {
 })
 // update List
 router.patch('/lists/:id', auth, fList, async (req, res) => {
-    const valid = ['name', 'description'];
+    const valid = ['tittle', 'description'];
     const proper = Object.keys(req.body)
     const isValid = proper.every(i => valid.includes(i))
     if (!isValid) {

@@ -124,7 +124,8 @@ router.post('/users/me/avatar', auth, uploadAvatar.single('avatar'), async (req,
     res.sendStatus(200)
 }, (error, req, res, next) => {
     res.status(400).send({
-        error: error.message
+        error: error.message,
+
     })
 })
 // deleting avatar
