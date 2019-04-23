@@ -31,10 +31,13 @@ const taskShema = new mongose.Schema({
         type: mongose.Schema.Types.ObjectId,
         required: true,
         ref: "User"
+    },
+    temp_Id: {
+        type: String,
     }
 }, {
-    timestamps: true,
-})
+        timestamps: true,
+    })
 
 const Task = mongose.model('Task', taskShema)
 module.exports = Task
