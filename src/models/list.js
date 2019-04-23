@@ -8,6 +8,9 @@ const listShema = new mongose.Schema({
     description: {
         type: String,
     },
+    temp_id: {
+        type: Number
+    },
     owner: {
         type: mongose.Schema.Types.ObjectId,
         required: true,
@@ -18,8 +21,8 @@ const listShema = new mongose.Schema({
         required: true,
     }
 }, {
-    timestamps: true,
-})
+        timestamps: true,
+    })
 
 listShema.virtual('tasks', {
     ref: "Task",
