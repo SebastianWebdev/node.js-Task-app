@@ -33,7 +33,7 @@ const taskShema = new mongose.Schema({
         ref: "User"
     },
     temp_Id: {
-        type: String,
+        type: Number,
     }
 }, {
         timestamps: true,
